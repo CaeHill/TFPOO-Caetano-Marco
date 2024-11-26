@@ -197,7 +197,7 @@ public class CadastrarNovoTransporte extends Application {
             int tempMin = Integer.parseInt(((TextField) scene.lookup("#tempMinCampo")).getText());
             int tempMax = Integer.parseInt(((TextField) scene.lookup("#tempMaxCampo")).getText());
 
-            TransportePessoal transporte = new TransportePessoal(numero, nome, descricao, peso, latOrig, longOrig, latDest, longDest, passageiros, tempMin, tempMax);
+            TransportePessoal transporte = new TransportePessoal(numero, nome, descricao, peso, latOrig, longOrig, latDest, longDest, passageiros);
 
             if (gestor.cadastrarTransporte(transporte)) {
                 txtMensagens.appendText("Transporte cadastrado com sucesso!\n");
