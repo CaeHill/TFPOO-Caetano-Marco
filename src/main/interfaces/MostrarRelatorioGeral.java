@@ -1,9 +1,9 @@
-package Interfaces;
+package main.interfaces;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class RealizarLeituraDeDadosDeSimulacao extends Application {
+public class MostrarRelatorioGeral extends Application {
 
     public static void main(String[] args) {
         launch(args);

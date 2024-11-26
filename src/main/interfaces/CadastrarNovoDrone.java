@@ -1,9 +1,9 @@
-package Interfaces;
+package main.interfaces;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class AlterarASituacaoDeUmTransporte extends Application {
+public class CadastrarNovoDrone extends Application {
 
     public static void main(String[] args) {
         launch(args);

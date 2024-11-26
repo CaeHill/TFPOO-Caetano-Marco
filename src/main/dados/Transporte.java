@@ -1,4 +1,4 @@
-package dados;
+package main.dados;
 
 public abstract class Transporte {
 	private int numero;

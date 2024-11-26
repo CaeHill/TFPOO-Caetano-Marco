@@ -1,4 +1,4 @@
-import aplicacao.ACMEAirDrones;
+package main;
 
 public class Main {
 

@@ -1,4 +1,4 @@
-package dados;
+package main.dados;
 
 public class TransportePessoal extends Transporte {
 	private int numero;

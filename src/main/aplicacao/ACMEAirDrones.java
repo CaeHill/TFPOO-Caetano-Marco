@@ -1,4 +1,4 @@
-package aplicacao;
+package main.aplicacao;
 
 public class ACMEAirDrones {
 

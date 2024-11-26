@@ -1,4 +1,4 @@
-package dados;
+package main.dados;
 
 public class DroneCargaInanimada extends DroneCarga {
 
@@ -7,5 +7,4 @@ public class DroneCargaInanimada extends DroneCarga {
 	public double calculaCustoKm() {
 		return 0;
 	}
-
 }
