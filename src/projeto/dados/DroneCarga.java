@@ -10,4 +10,5 @@ public abstract class DroneCarga extends Drone {
 		super(codigo, custoFixo, autonomia);
 		this.pesoMaximo = pesoMaximo;
 	}
+
 }
