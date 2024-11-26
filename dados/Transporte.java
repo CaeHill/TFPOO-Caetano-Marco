@@ -1,6 +1,6 @@
 package dados;
 
-public abstract class   Transporte {
+public abstract class Transporte {
 	private int numero;
 	private String nomeCliente;
 	private String descricao;

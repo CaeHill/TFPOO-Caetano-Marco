@@ -6,4 +6,8 @@ public class TransporteCargaViva extends Transporte {
 
 	private double temperaturaMaxima;
 
+	public void calcularCusto() {
+
+	}
+
 }
