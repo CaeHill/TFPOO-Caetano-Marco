@@ -1,7 +1,7 @@
 package TFPOO.interfaces;
 
 import TFPOO.dados.*;
-import TFPOO.gestores.TransporteGestor;
+import TFPOO.gestores.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class CadastrarNovoTransporte {
     private Stage primaryStage;
-    private TransporteGestor transporteGestor;
+    private TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
     private TabPane tabPane;
 
     private final String BUTTON_STYLE = """
@@ -34,9 +34,7 @@ public class CadastrarNovoTransporte {
             -fx-cursor: hand;
             """;
 
-    public CadastrarNovoTransporte() {
-        this.transporteGestor = new TransporteGestor();
-    }
+    public CadastrarNovoTransporte() {}
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
@@ -110,6 +108,7 @@ public class CadastrarNovoTransporte {
                 );
 
                 if (transporteGestor.cadastrarTransporte(transporte)) {
+                    transporteGestor.adicionarTransportePendentes(transporte);
                     mostrarAlerta("Sucesso", "Transporte Pessoal cadastrado com sucesso!");
                     limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                             txtLatOrigem, txtLatDestino, txtLongOrigem,
@@ -174,6 +173,7 @@ public class CadastrarNovoTransporte {
                 );
 
                 if (transporteGestor.cadastrarTransporte(transporte)) {
+                    transporteGestor.adicionarTransportePendentes(transporte);
                     mostrarAlerta("Sucesso", "Transporte de Carga Inanimada cadastrado com sucesso!");
                     limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                             txtLatOrigem, txtLatDestino, txtLongOrigem,
@@ -242,6 +242,7 @@ public class CadastrarNovoTransporte {
                 );
 
                 if (transporteGestor.cadastrarTransporte(transporte)) {
+                    transporteGestor.adicionarTransportePendentes(transporte);
                     mostrarAlerta("Sucesso", "Transporte de Carga Viva cadastrado com sucesso!");
                     limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                             txtLatOrigem, txtLatDestino, txtLongOrigem,
@@ -275,7 +276,7 @@ public class CadastrarNovoTransporte {
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
         btnVoltar.setOnAction(e -> {
             Menu menu = new Menu();
-            menu.start(primaryStage); // Voltar para a tela do menu
+            menu.start(primaryStage);
         });
 
         botoesAcao.getChildren().add(btnVoltar);
@@ -283,7 +284,6 @@ public class CadastrarNovoTransporte {
         return botoesAcao;
     }
 
-    // Métodos auxiliares de criação de campos
     private TextField criarCampoTexto(String texto) {
         TextField txtField = new TextField();
         txtField.setPromptText(texto);

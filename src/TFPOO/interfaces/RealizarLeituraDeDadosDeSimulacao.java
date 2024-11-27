@@ -35,9 +35,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
             -fx-cursor: hand;
             """;
 
-    public RealizarLeituraDeDadosDeSimulacao() {
-        // A instância global de DroneGestor e TransporteGestor será acessada diretamente
-    }
+    public RealizarLeituraDeDadosDeSimulacao() {}
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
@@ -64,7 +62,6 @@ public class RealizarLeituraDeDadosDeSimulacao {
             }
         });
 
-        // Habilitar o botão quando o campo for preenchido
         txtNomeArquivo.textProperty().addListener((observable, oldValue, newValue) -> {
             btnCarregarDados.setDisable(newValue.trim().isEmpty());
             btnCarregarDados.setStyle(BUTTON_STYLE);
@@ -83,7 +80,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
         btnVoltar.setOnAction(e -> {
             Menu menu = new Menu();
-            menu.start(primaryStage); // Voltar para a tela do menu
+            menu.start(primaryStage);
         });
 
         botoesAcao.getChildren().add(btnVoltar);
@@ -97,19 +94,15 @@ public class RealizarLeituraDeDadosDeSimulacao {
     }
 
     private void carregarDadosDeSimulacao(String nomeArquivo) {
-        // Acessando os gestores globais diretamente
         DroneGestor droneGestor = SistemaGestores.getDroneGestor();
         TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
 
-        // Definindo os caminhos dos arquivos CSV
         String caminhoDrones = nomeArquivo + "-DRONES.CSV";
         String caminhoTransportes = nomeArquivo + "-TRANSPORTES.CSV";
 
-        // Flags para verificar se algum objeto foi cadastrado
         boolean algumDroneCadastrado = false;
         boolean algumTransporteCadastrado = false;
 
-        // Carregar os dados de drones
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoDrones))) {
             String linha;
             while ((linha = br.readLine()) != null) {
@@ -121,7 +114,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[3]),
                             Integer.parseInt(dados[4])
                     );
-                    droneGestor.cadastrarDrone(drone);  // Usando o gestor global
+                    droneGestor.cadastrarDrone(drone);
                     algumDroneCadastrado = true;
                 } else if (dados[0].equals("2")) { // Drone Carga Inanimada
                     DroneCargaInanimada drone = new DroneCargaInanimada(
@@ -131,7 +124,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[4]),
                             Boolean.parseBoolean(dados[5])
                     );
-                    droneGestor.cadastrarDrone(drone);  // Usando o gestor global
+                    droneGestor.cadastrarDrone(drone);
                     algumDroneCadastrado = true;
                 } else if (dados[0].equals("3")) { // Drone Carga Viva
                     DroneCargaViva drone = new DroneCargaViva(
@@ -141,7 +134,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[4]),
                             Boolean.parseBoolean(dados[5])
                     );
-                    droneGestor.cadastrarDrone(drone);  // Usando o gestor global
+                    droneGestor.cadastrarDrone(drone);
                     algumDroneCadastrado = true;
                 }
             }
@@ -149,7 +142,6 @@ public class RealizarLeituraDeDadosDeSimulacao {
             mostrarAlerta("Erro", "Falha ao ler o arquivo de drones.");
         }
 
-        // Carregar os dados de transportes
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoTransportes))) {
             String linha;
             while ((linha = br.readLine()) != null) {
@@ -166,8 +158,10 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[8]),
                             Integer.parseInt(dados[9])
                     );
-                    transporteGestor.cadastrarTransporte(transporte);  // Usando o gestor global
-                    algumTransporteCadastrado = true;
+                    if (transporteGestor.cadastrarTransporte(transporte)) {
+                        transporteGestor.adicionarTransportePendentes(transporte);
+                        algumTransporteCadastrado = true;
+                    }
                 } else if (dados[0].equals("2")) { // Transporte Carga Inanimada
                     TransporteCargaInanimada transporte = new TransporteCargaInanimada(
                             Integer.parseInt(dados[1]),
@@ -180,8 +174,10 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[8]),
                             Boolean.parseBoolean(dados[9])
                     );
-                    transporteGestor.cadastrarTransporte(transporte);  // Usando o gestor global
-                    algumTransporteCadastrado = true;
+                    if (transporteGestor.cadastrarTransporte(transporte)) {
+                        transporteGestor.adicionarTransportePendentes(transporte);
+                        algumTransporteCadastrado = true;
+                    }
                 } else if (dados[0].equals("3")) { // Transporte Carga Viva
                     TransporteCargaViva transporte = new TransporteCargaViva(
                             Integer.parseInt(dados[1]),
@@ -195,8 +191,10 @@ public class RealizarLeituraDeDadosDeSimulacao {
                             Double.parseDouble(dados[9]),
                             Double.parseDouble(dados[10])
                     );
-                    transporteGestor.cadastrarTransporte(transporte);  // Usando o gestor global
-                    algumTransporteCadastrado = true;
+                    if (transporteGestor.cadastrarTransporte(transporte)) {
+                        transporteGestor.adicionarTransportePendentes(transporte);
+                        algumTransporteCadastrado = true;
+                    }
                 }
             }
         } catch (IOException e) {

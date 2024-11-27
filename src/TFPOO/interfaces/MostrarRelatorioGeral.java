@@ -133,15 +133,11 @@ public class MostrarRelatorioGeral {
         colunaPeso.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getPeso()).asObject());
 
-        TableColumn<Transporte, Double> colunaCusto = new TableColumn<>("Custo");
-        colunaCusto.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().calcularCusto()).asObject());
-
         TableColumn<Transporte, String> colunaTipo = new TableColumn<>("Tipo");
         colunaTipo.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Transporte
 
-        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaCusto, colunaTipo);
+        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaTipo);
 
         // Adicionando os transportes cadastrados
         tabelaTransportes.getItems().setAll(transporteGestor.getTransportes());
