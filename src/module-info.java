@@ -6,5 +6,5 @@ module TFPOO.Caetano.Marco {
     requires javafx.web;
     requires javafx.media;
 
-    exports projeto.interfaces to javafx.graphics;
+    exports TFPOO.interfaces to javafx.graphics;
 }
