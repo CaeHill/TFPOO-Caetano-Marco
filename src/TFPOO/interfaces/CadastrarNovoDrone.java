@@ -2,6 +2,7 @@ package TFPOO.interfaces;
 
 import TFPOO.dados.*;
 import TFPOO.gestores.DroneGestor;
+import TFPOO.gestores.SistemaGestores;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +13,7 @@ import javafx.stage.Stage;
 
 public class CadastrarNovoDrone {
     private Stage primaryStage;
-    private DroneGestor droneGestor;
+    private DroneGestor droneGestor = SistemaGestores.getDroneGestor();
     private TabPane tabPane;
 
     private final String BUTTON_STYLE = """
@@ -34,9 +35,7 @@ public class CadastrarNovoDrone {
             -fx-cursor: hand;
             """;
 
-    public void CadastroNovoDrone() {
-        this.droneGestor = new DroneGestor();
-    }
+    public CadastrarNovoDrone() {}
 
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;

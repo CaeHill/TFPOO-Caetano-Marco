@@ -12,5 +12,16 @@ public class TransporteCargaInanimada extends Transporte {
 	}
 
 	@Override
-	public double calcularCusto() { return 0; }
+	public double calcularCusto() {
+		if (getDrone() == null) {
+			throw new IllegalStateException("Drone não alocado! Não é possível calcular o custo.");
+		}
+
+		double custoPorKm = getDrone().calculaCustoKm();
+		double distancia = calcularDistancia();
+		double custoTransporte = custoPorKm * distancia;
+
+		double acrescimo = cargaPerigosa ? 500.00 : 0.00;
+		return custoTransporte + acrescimo;
+	}
 }

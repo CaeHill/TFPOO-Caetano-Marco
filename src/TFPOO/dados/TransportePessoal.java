@@ -12,5 +12,16 @@ public class TransportePessoal extends Transporte {
 	}
 
 	@Override
-	public double calcularCusto() { return 0; }
+	public double calcularCusto() {
+		if (getDrone() == null) {
+			throw new IllegalStateException("Drone não alocado! Não é possível calcular o custo.");
+		}
+
+		double custoPorKm = getDrone().calculaCustoKm();
+		double distancia = calcularDistancia();
+		double custoTransporte = custoPorKm * distancia;
+
+		double acrescimo = 10.00 * qtdPassageiros;
+		return custoTransporte + acrescimo;
+	}
 }

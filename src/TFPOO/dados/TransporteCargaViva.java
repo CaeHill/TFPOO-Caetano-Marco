@@ -14,5 +14,16 @@ public class TransporteCargaViva extends Transporte {
 	}
 
 	@Override
-	public double calcularCusto() { return 0; }
+	public double calcularCusto() {
+		if (getDrone() == null) {
+			throw new IllegalStateException("Drone não alocado! Não é possível calcular o custo.");
+		}
+
+		double custoPorKm = getDrone().calculaCustoKm();
+		double distancia = calcularDistancia();
+		double custoTransporte = custoPorKm * distancia;
+
+		double acrescimo = (temperaturaMaxima - temperaturaMinima) > 10.00 ? 1000.00 : 0.00;
+		return custoTransporte + acrescimo;
+	}
 }
