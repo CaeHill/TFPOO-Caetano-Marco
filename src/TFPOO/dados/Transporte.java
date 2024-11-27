@@ -32,6 +32,7 @@ public abstract class Transporte {
 	public int getNumero() { return numero; }
 	public String getNomeCliente() { return nomeCliente; }
 	public String getDescricao() { return descricao; }
+	public double getPeso() { return peso; }
 	public double getLatitudeOrigem() { return latitudeOrigem; }
 	public double getLongitudeOrigem() { return longitudeOrigem; }
 	public double getLatitudeDestino() { return latitudeDestino; }

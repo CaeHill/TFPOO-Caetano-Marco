@@ -1,6 +1,6 @@
 package TFPOO.gestores;
 
-import TFPOO.dados.*;
+import TFPOO.dados.Drone;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +13,11 @@ public class DroneGestor {
                 return false;
             }
         }
-        drone.calculaCustoKm();
         drones.add(drone);
         return true;
     }
 
-    public String listarTodosDrone() {
-        return "";
+    public Set<Drone> getDrones() {
+        return drones;
     }
 }
