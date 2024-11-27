@@ -13,6 +13,6 @@ public class TransporteCargaViva extends Transporte {
 		this.temperaturaMaxima = temperaturaMaxima;
 	}
 
-	public void calcularCusto() {}
-
+	@Override
+	public double calcularCusto() { return 0; }
 }

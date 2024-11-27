@@ -12,7 +12,6 @@ public abstract class Transporte {
 	private double longitudeOrigem;
 	private double longitudeDestino;
 	private Estado situacao;
-	private double custoFinal;
 
 	//Construtor
 	public Transporte(int numero, String nomeCliente, String descricao, double peso, double latitudeOrigem, double latitudeDestino, double longitudeOrigem, double longitudeDestino) {
@@ -27,7 +26,7 @@ public abstract class Transporte {
 		this.situacao = Estado.PENDENTE;
 	}
 
-	public abstract void calcularCusto();
+	public abstract double calcularCusto();
 
 	//Getters e setters
 	public int getNumero() { return numero; }
@@ -37,6 +36,5 @@ public abstract class Transporte {
 	public double getLongitudeOrigem() { return longitudeOrigem; }
 	public double getLatitudeDestino() { return latitudeDestino; }
 	public double getLongitudeDestino() { return longitudeDestino; }
-	public double getCustoFinal() { return custoFinal; }
-	public void setCustoFinal(double custoFinal) { this.custoFinal = custoFinal; }
+	public Estado getSituacao() { return situacao; }
 }

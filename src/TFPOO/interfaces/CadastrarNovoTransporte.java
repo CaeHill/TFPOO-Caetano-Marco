@@ -1,110 +1,357 @@
 package TFPOO.interfaces;
 
+import TFPOO.dados.*;
 import TFPOO.gestores.TransporteGestor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class CadastrarNovoTransporte {
-
     private Stage primaryStage;
-    private TextArea txtMensagens;
+    private TransporteGestor transporteGestor;
+    private TabPane tabPane;
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
             -fx-text-fill: white;
             -fx-font-weight: bold;
             -fx-min-height: 40px;
-            -fx-pref-width: 200px;
+            -fx-pref-width: 150px;
+            """;
+    private final String BUTTON_DISABLED_STYLE = """
+            -fx-background-color: #A9A9A9;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-min-height: 40px;
+            -fx-pref-width: 150px;
             """;
     private final String BUTTON_HOVER_STYLE = """
             -fx-background-color: rgba(25,118,210,0.75);
             -fx-cursor: hand;
             """;
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    public CadastrarNovoTransporte() {
+        this.transporteGestor = new TransporteGestor();
+    }
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
     }
 
     public void mostrarTela() {
-        VBox mainLayout = new VBox(20);
-        mainLayout.setPadding(new Insets(20));
-        mainLayout.setStyle("-fx-background-color: #f5f5f5;");
+        VBox layout = new VBox(15);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
 
-        Label titulo = new Label("Cadastro de Transporte");
-        titulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        // Criar TabPane para diferentes tipos de transporte
+        tabPane = new TabPane();
 
-        VBox dadosPanel = new VBox(15);
-        dadosPanel.setStyle("""
-            -fx-background-color: white;
-            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
-            -fx-background-radius: 5;
-            -fx-padding: 15;
-            """);
+        // Adicionar abas para cada tipo de transporte
+        Tab tabPessoal = criarAbaCadastroTransportePessoal();
+        Tab tabCargaInanimada = criarAbaCadastroTransporteCargaInanimada();
+        Tab tabCargaViva = criarAbaCadastroTransporteCargaViva();
 
-        Label dadosTitulo = new Label("Dados Básicos");
-        dadosTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        tabPane.getTabs().addAll(tabPessoal, tabCargaInanimada, tabCargaViva);
 
-        HBox dadosFields = new HBox(15);
-        dadosFields.getChildren().addAll(
-                criarCampo("Número:", 100, "numeroCampo"),
-                criarCampo("Nome:", 200, "nomeCampo"),
-                criarCampo("Descrição:", 300, "descricaoCampo")
+        // Botões de ação
+        HBox botoesAcao = criarBotoesAcao();
+
+        layout.getChildren().addAll(tabPane, botoesAcao);
+
+        Scene scene = new Scene(layout, 500, 700);
+        primaryStage.setTitle("Cadastrar Novo Transporte");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private Tab criarAbaCadastroTransportePessoal() {
+        Tab tabPessoal = new Tab("Transporte Pessoal");
+        VBox layoutPessoal = new VBox(20);
+        layoutPessoal.setPadding(new Insets(15));
+
+        // Campos de texto para Transporte Pessoal
+        TextField txtNumero = criarCampoNumerico("Número do Transporte");
+        TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
+        TextField txtDescricao = criarCampoTexto("Descrição");
+        TextField txtPeso = criarCampoNumericoDecimal("Peso");
+        TextField txtLatOrigem = criarCampoNumericoDecimal("Latitude de Origem");
+        TextField txtLatDestino = criarCampoNumericoDecimal("Latitude de Destino");
+        TextField txtLongOrigem = criarCampoNumericoDecimal("Longitude de Origem");
+        TextField txtLongDestino = criarCampoNumericoDecimal("Longitude de Destino");
+        TextField txtQtdPassageiros = criarCampoNumerico("Quantidade de Passageiros");
+
+        Button btnCadastrarPessoal = new Button("Cadastrar");
+        btnCadastrarPessoal.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarPessoal.setDisable(true);
+
+        // Adicionar listeners para habilitar/desabilitar botão
+        adicionarValidacaoCompleta(btnCadastrarPessoal,
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
+                txtQtdPassageiros);
+
+        btnCadastrarPessoal.setOnAction(e -> {
+            try {
+                TransportePessoal transporte = new TransportePessoal(
+                        Integer.parseInt(txtNumero.getText()),
+                        txtNomeCliente.getText(),
+                        txtDescricao.getText(),
+                        Double.parseDouble(txtPeso.getText()),
+                        Double.parseDouble(txtLatOrigem.getText()),
+                        Double.parseDouble(txtLatDestino.getText()),
+                        Double.parseDouble(txtLongOrigem.getText()),
+                        Double.parseDouble(txtLongDestino.getText()),
+                        Integer.parseInt(txtQtdPassageiros.getText())
+                );
+
+                if (transporteGestor.cadastrarTransporte(transporte)) {
+                    mostrarAlerta("Sucesso", "Transporte Pessoal cadastrado com sucesso!");
+                    limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                            txtLatOrigem, txtLatDestino, txtLongOrigem,
+                            txtLongDestino, txtQtdPassageiros);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um transporte com este número!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutPessoal.getChildren().addAll(
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
+                txtQtdPassageiros, btnCadastrarPessoal
         );
 
-        dadosPanel.getChildren().addAll(dadosTitulo, dadosFields);
-
-        txtMensagens = new TextArea();
-        txtMensagens.setStyle("-fx-font-family: 'Consolas';");
-        txtMensagens.setPrefRowCount(5);
-        txtMensagens.setEditable(false);
-
-        Button btnVoltar = criarBotao("Voltar", e -> mostrarMenuPrincipal());
-        Button btnCadastrar = criarBotao("Cadastrar", e -> cadastrarTransporte());
-
-        HBox botoesBox = new HBox(15, btnVoltar, btnCadastrar);
-        botoesBox.setAlignment(Pos.CENTER);
-
-        mainLayout.getChildren().addAll(titulo, dadosPanel, botoesBox, txtMensagens);
-
-        Scene cadastroScene = new Scene(mainLayout, 700, 800);
-        primaryStage.setTitle("Cadastrar Novo Transporte");
-        primaryStage.setScene(cadastroScene);
+        tabPessoal.setContent(layoutPessoal);
+        return tabPessoal;
     }
 
-    private VBox criarCampo(String label, double width, String id) {
-        VBox campo = new VBox(5);
-        Label lblCampo = new Label(label);
-        TextField txtCampo = new TextField();
-        txtCampo.setId(id);
-        txtCampo.setPrefWidth(width);
-        campo.getChildren().addAll(lblCampo, txtCampo);
-        return campo;
+    private Tab criarAbaCadastroTransporteCargaInanimada() {
+        Tab tabCargaInanimada = new Tab("Transporte Carga Inanimada");
+        VBox layoutCargaInanimada = new VBox(20);
+        layoutCargaInanimada.setPadding(new Insets(15));
+
+        // Campos de texto para Carga Inanimada
+        TextField txtNumero = criarCampoNumerico("Número do Transporte");
+        TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
+        TextField txtDescricao = criarCampoTexto("Descrição");
+        TextField txtPeso = criarCampoNumericoDecimal("Peso");
+        TextField txtLatOrigem = criarCampoNumericoDecimal("Latitude de Origem");
+        TextField txtLatDestino = criarCampoNumericoDecimal("Latitude de Destino");
+        TextField txtLongOrigem = criarCampoNumericoDecimal("Longitude de Origem");
+        TextField txtLongDestino = criarCampoNumericoDecimal("Longitude de Destino");
+
+        CheckBox chkCargaPerigosa = new CheckBox("Carga Perigosa");
+
+        Button btnCadastrarInanimada = new Button("Cadastrar");
+        btnCadastrarInanimada.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarInanimada.setDisable(true);
+
+        // Adicionar listeners para habilitar/desabilitar botão
+        adicionarValidacaoCompleta(btnCadastrarInanimada,
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino);
+
+        btnCadastrarInanimada.setOnAction(e -> {
+            try {
+                TransporteCargaInanimada transporte = new TransporteCargaInanimada(
+                        Integer.parseInt(txtNumero.getText()),
+                        txtNomeCliente.getText(),
+                        txtDescricao.getText(),
+                        Double.parseDouble(txtPeso.getText()),
+                        Double.parseDouble(txtLatOrigem.getText()),
+                        Double.parseDouble(txtLatDestino.getText()),
+                        Double.parseDouble(txtLongOrigem.getText()),
+                        Double.parseDouble(txtLongDestino.getText()),
+                        chkCargaPerigosa.isSelected()
+                );
+
+                if (transporteGestor.cadastrarTransporte(transporte)) {
+                    mostrarAlerta("Sucesso", "Transporte de Carga Inanimada cadastrado com sucesso!");
+                    limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                            txtLatOrigem, txtLatDestino, txtLongOrigem,
+                            txtLongDestino);
+                    chkCargaPerigosa.setSelected(false);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um transporte com este número!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutCargaInanimada.getChildren().addAll(
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
+                chkCargaPerigosa, btnCadastrarInanimada
+        );
+
+        tabCargaInanimada.setContent(layoutCargaInanimada);
+        return tabCargaInanimada;
     }
 
-    private Button criarBotao(String texto, javafx.event.EventHandler<javafx.event.ActionEvent> acao) {
-        Button btn = new Button(texto);
-        btn.setStyle(BUTTON_STYLE);
-        btn.setOnMouseEntered(e -> btn.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
-        btn.setOnMouseExited(e -> btn.setStyle(BUTTON_STYLE));
-        btn.setOnAction(acao);
-        return btn;
+    private Tab criarAbaCadastroTransporteCargaViva() {
+        Tab tabCargaViva = new Tab("Transporte Carga Viva");
+        VBox layoutCargaViva = new VBox(20);
+        layoutCargaViva.setPadding(new Insets(15));
+
+        // Campos de texto para Carga Viva
+        TextField txtNumero = criarCampoNumerico("Número do Transporte");
+        TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
+        TextField txtDescricao = criarCampoTexto("Descrição");
+        TextField txtPeso = criarCampoNumericoDecimal("Peso");
+        TextField txtLatOrigem = criarCampoNumericoDecimal("Latitude de Origem");
+        TextField txtLatDestino = criarCampoNumericoDecimal("Latitude de Destino");
+        TextField txtLongOrigem = criarCampoNumericoDecimal("Longitude de Origem");
+        TextField txtLongDestino = criarCampoNumericoDecimal("Longitude de Destino");
+        TextField txtTemperaturaMin = criarCampoNumericoDecimal("Temperatura Mínima");
+        TextField txtTemperaturaMax = criarCampoNumericoDecimal("Temperatura Máxima");
+
+        Button btnCadastrarViva = new Button("Cadastrar");
+        btnCadastrarViva.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarViva.setDisable(true);
+
+        // Adicionar listeners para habilitar/desabilitar botão
+        adicionarValidacaoCompleta(btnCadastrarViva,
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
+                txtTemperaturaMin, txtTemperaturaMax);
+
+        btnCadastrarViva.setOnAction(e -> {
+            try {
+                TransporteCargaViva transporte = new TransporteCargaViva(
+                        Integer.parseInt(txtNumero.getText()),
+                        txtNomeCliente.getText(),
+                        txtDescricao.getText(),
+                        Double.parseDouble(txtPeso.getText()),
+                        Double.parseDouble(txtLatOrigem.getText()),
+                        Double.parseDouble(txtLatDestino.getText()),
+                        Double.parseDouble(txtLongOrigem.getText()),
+                        Double.parseDouble(txtLongDestino.getText()),
+                        Double.parseDouble(txtTemperaturaMin.getText()),
+                        Double.parseDouble(txtTemperaturaMax.getText())
+                );
+
+                if (transporteGestor.cadastrarTransporte(transporte)) {
+                    mostrarAlerta("Sucesso", "Transporte de Carga Viva cadastrado com sucesso!");
+                    limparCampos(txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                            txtLatOrigem, txtLatDestino, txtLongOrigem,
+                            txtLongDestino, txtTemperaturaMin, txtTemperaturaMax);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um transporte com este número!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutCargaViva.getChildren().addAll(
+                txtNumero, txtNomeCliente, txtDescricao, txtPeso,
+                txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
+                txtTemperaturaMin, txtTemperaturaMax, btnCadastrarViva
+        );
+
+        tabCargaViva.setContent(layoutCargaViva);
+        return tabCargaViva;
     }
 
-    private void cadastrarTransporte() {
-        // Lógica de cadastro, pode ser adaptada para o gestor
-        txtMensagens.appendText("Transporte cadastrado com sucesso!\n");
+    private HBox criarBotoesAcao() {
+        HBox botoesAcao = new HBox(15);
+        botoesAcao.setAlignment(Pos.CENTER);
+        botoesAcao.setPadding(new Insets(10));
+
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setStyle(BUTTON_STYLE);
+        btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
+        btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
+        btnVoltar.setOnAction(e -> {
+            Menu menu = new Menu();
+            menu.start(primaryStage); // Voltar para a tela do menu
+        });
+
+        botoesAcao.getChildren().add(btnVoltar);
+
+        return botoesAcao;
     }
 
-    private void mostrarMenuPrincipal() {
-        Menu menu = new Menu();
-        menu.start(primaryStage);
+    // Métodos auxiliares de criação de campos
+    private TextField criarCampoTexto(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        return txtField;
+    }
+
+    private TextField criarCampoNumerico(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        txtField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Permitir apenas números inteiros
+            if (!newValue.matches("\\d*")) {
+                txtField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        return txtField;
+    }
+
+    private TextField criarCampoNumericoDecimal(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        txtField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Permitir apenas números e um ponto decimal
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                txtField.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+        return txtField;
+    }
+
+    private void adicionarValidacaoCompleta(Button botaoCadastrar, TextField... campos) {
+        // Adiciona listeners para todos os campos para verificar quando todos estão preenchidos
+        for (TextField campo : campos) {
+            campo.textProperty().addListener((observable, oldValue, newValue) -> {
+                verificarCamposPreenchidos(botaoCadastrar, campos);
+            });
+        }
+    }
+
+    private void verificarCamposPreenchidos(Button botaoCadastrar, TextField... campos) {
+        boolean todosCamposPreenchidos = true;
+
+        for (TextField campo : campos) {
+            if (campo.getText().trim().isEmpty()) {
+                todosCamposPreenchidos = false;
+                break;
+            }
+        }
+
+        // Atualizar estilo e estado do botão
+        if (todosCamposPreenchidos) {
+            botaoCadastrar.setStyle(BUTTON_STYLE);
+            botaoCadastrar.setOnMouseEntered(e -> botaoCadastrar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
+            botaoCadastrar.setOnMouseExited(e -> botaoCadastrar.setStyle(BUTTON_STYLE));
+            botaoCadastrar.setDisable(false);
+        } else {
+            botaoCadastrar.setStyle(BUTTON_DISABLED_STYLE);
+            botaoCadastrar.setDisable(true);
+        }
+    }
+
+    private void limparCampos(TextField... campos) {
+        for (TextField campo : campos) {
+            campo.clear();
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }
