@@ -70,6 +70,7 @@ public class CadastrarNovoTransporte {
 
     private Tab criarAbaCadastroTransportePessoal() {
         Tab tabPessoal = new Tab("Transporte Pessoal");
+        tabPessoal.setClosable(false);
         VBox layoutPessoal = new VBox(20);
         layoutPessoal.setPadding(new Insets(15));
 
@@ -133,6 +134,7 @@ public class CadastrarNovoTransporte {
 
     private Tab criarAbaCadastroTransporteCargaInanimada() {
         Tab tabCargaInanimada = new Tab("Transporte Carga Inanimada");
+        tabCargaInanimada.setClosable(false);
         VBox layoutCargaInanimada = new VBox(20);
         layoutCargaInanimada.setPadding(new Insets(15));
 
@@ -197,8 +199,10 @@ public class CadastrarNovoTransporte {
 
     private Tab criarAbaCadastroTransporteCargaViva() {
         Tab tabCargaViva = new Tab("Transporte Carga Viva");
+        tabCargaViva.setClosable(false);
         VBox layoutCargaViva = new VBox(20);
         layoutCargaViva.setPadding(new Insets(15));
+        tabPane.setTabMinWidth(121.1);
 
         // Campos de texto para Carga Viva
         TextField txtNumero = criarCampoNumerico("Número do Transporte");
