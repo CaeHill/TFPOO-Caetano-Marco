@@ -166,7 +166,7 @@ public class CadastrarNovoDrone {
         tabCargaViva.setClosable(false);
         VBox layoutCargaViva = new VBox(20);
         layoutCargaViva.setPadding(new Insets(15));
-        tabPane.setTabMinWidth(121.1);
+        tabPane.setTabMinWidth(130.1);
 
         TextField txtCodigo = criarCampoNumerico("Código do Drone");
         TextField txtCustoFixo = criarCampoNumericoDecimal("Custo Fixo");
