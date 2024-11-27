@@ -11,7 +11,7 @@ public abstract class Transporte {
 	private double latitudeDestino;
 	private double longitudeOrigem;
 	private double longitudeDestino;
-	private String situacao; // PENDENTE, ALOCADO, TERMINADO, CANCELADO
+	private Estado situacao;
 	private double custoFinal;
 
 	//Construtor
@@ -24,6 +24,7 @@ public abstract class Transporte {
 		this.latitudeDestino = latitudeDestino;
 		this.longitudeOrigem = longitudeOrigem;
 		this.longitudeDestino = longitudeDestino;
+		this.situacao = Estado.PENDENTE;
 	}
 
 	public abstract void calcularCusto();

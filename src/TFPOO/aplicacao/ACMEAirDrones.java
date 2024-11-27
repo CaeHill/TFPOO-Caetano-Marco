@@ -14,8 +14,6 @@ public class ACMEAirDrones {
 	public void executar() {
 		leitorSIMULADRONESCSV();
 		leitorSIMULATRASPORTESCSV();
-
-		Menu menu = new Menu();
 	}
 
 	public void leitorSIMULADRONESCSV() {
