@@ -1,110 +1,304 @@
 package TFPOO.interfaces;
 
+import TFPOO.dados.*;
 import TFPOO.gestores.DroneGestor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class CadastrarNovoDrone {
-
     private Stage primaryStage;
-    private TextArea txtMensagens;
+    private DroneGestor droneGestor;
+    private TabPane tabPane;
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
             -fx-text-fill: white;
             -fx-font-weight: bold;
             -fx-min-height: 40px;
-            -fx-pref-width: 200px;
+            -fx-pref-width: 150px;
+            """;
+    private final String BUTTON_DISABLED_STYLE = """
+            -fx-background-color: #A9A9A9;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-min-height: 40px;
+            -fx-pref-width: 150px;
             """;
     private final String BUTTON_HOVER_STYLE = """
             -fx-background-color: rgba(25,118,210,0.75);
             -fx-cursor: hand;
             """;
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    public void CadastroNovoDrone() {
+        this.droneGestor = new DroneGestor();
+    }
+
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
     }
 
     public void mostrarTela() {
-        VBox mainLayout = new VBox(20);
-        mainLayout.setPadding(new Insets(20));
-        mainLayout.setStyle("-fx-background-color: #f5f5f5;");
+        VBox layout = new VBox(15);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
 
-        Label titulo = new Label("Cadastro de Drone");
-        titulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        tabPane = new TabPane();
 
-        VBox dadosPanel = new VBox(15);
-        dadosPanel.setStyle("""
-            -fx-background-color: white;
-            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
-            -fx-background-radius: 5;
-            -fx-padding: 15;
-            """);
+        Tab tabPessoal = criarAbaCadastroDronePessoal();
+        Tab tabCargaInanimada = criarAbaCadastroDroneCargaInanimada();
+        Tab tabCargaViva = criarAbaCadastroDroneCargaViva();
 
-        Label dadosTitulo = new Label("Dados Básicos");
-        dadosTitulo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        tabPane.getTabs().addAll(tabPessoal, tabCargaInanimada, tabCargaViva);
 
-        HBox dadosFields = new HBox(15);
-        dadosFields.getChildren().addAll(
-                criarCampo("Número:", 100, "numeroCampo"),
-                criarCampo("Nome:", 200, "nomeCampo"),
-                criarCampo("Descrição:", 300, "descricaoCampo")
+        HBox botoesAcao = criarBotoesAcao();
+
+        layout.getChildren().addAll(tabPane, botoesAcao);
+
+        Scene scene = new Scene(layout, 500, 700);
+        primaryStage.setTitle("Cadastrar Novo Drone");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private Tab criarAbaCadastroDronePessoal() {
+        Tab tabPessoal = new Tab("Drone Pessoal");
+        tabPessoal.setClosable(false);
+        VBox layoutPessoal = new VBox(20);
+        layoutPessoal.setPadding(new Insets(15));
+
+        TextField txtCodigo = criarCampoNumerico("Código do Drone");
+        TextField txtCustoFixo = criarCampoNumericoDecimal("Custo Fixo");
+        TextField txtAutonomia = criarCampoNumericoDecimal("Autonomia (km)");
+        TextField txtQtdMaxPessoas = criarCampoNumerico("Quantidade Máxima de Pessoas");
+
+        Button btnCadastrarPessoal = new Button("Cadastrar");
+        btnCadastrarPessoal.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarPessoal.setDisable(true);
+
+        adicionarValidacaoCompleta(btnCadastrarPessoal,
+                txtCodigo, txtCustoFixo, txtAutonomia, txtQtdMaxPessoas);
+
+        btnCadastrarPessoal.setOnAction(e -> {
+            try {
+                DronePessoal drone = new DronePessoal(
+                        Integer.parseInt(txtCodigo.getText()),
+                        Double.parseDouble(txtCustoFixo.getText()),
+                        Double.parseDouble(txtAutonomia.getText()),
+                        Integer.parseInt(txtQtdMaxPessoas.getText())
+                );
+
+                if (droneGestor.cadastrarDrone(drone)) {
+                    mostrarAlerta("Sucesso", "Drone Pessoal cadastrado com sucesso!");
+                    limparCampos(txtCodigo, txtCustoFixo, txtAutonomia, txtQtdMaxPessoas);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um drone com este código!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutPessoal.getChildren().addAll(
+                txtCodigo, txtCustoFixo, txtAutonomia, txtQtdMaxPessoas, btnCadastrarPessoal
         );
 
-        dadosPanel.getChildren().addAll(dadosTitulo, dadosFields);
-
-        txtMensagens = new TextArea();
-        txtMensagens.setStyle("-fx-font-family: 'Consolas';");
-        txtMensagens.setPrefRowCount(5);
-        txtMensagens.setEditable(false);
-
-        Button btnVoltar = criarBotao("Voltar", e -> mostrarMenuPrincipal());
-        Button btnCadastrar = criarBotao("Cadastrar", e -> cadastrarDrone());
-
-        HBox botoesBox = new HBox(15, btnVoltar, btnCadastrar);
-        botoesBox.setAlignment(Pos.CENTER);
-
-        mainLayout.getChildren().addAll(titulo, dadosPanel, botoesBox, txtMensagens);
-
-        Scene cadastroScene = new Scene(mainLayout, 700, 800);
-        primaryStage.setTitle("Cadastrar Novo Transporte");
-        primaryStage.setScene(cadastroScene);
+        tabPessoal.setContent(layoutPessoal);
+        return tabPessoal;
     }
 
-    private VBox criarCampo(String label, double width, String id) {
-        VBox campo = new VBox(5);
-        Label lblCampo = new Label(label);
-        TextField txtCampo = new TextField();
-        txtCampo.setId(id);
-        txtCampo.setPrefWidth(width);
-        campo.getChildren().addAll(lblCampo, txtCampo);
-        return campo;
+    private Tab criarAbaCadastroDroneCargaInanimada() {
+        Tab tabCargaInanimada = new Tab("Drone Carga Inanimada");
+        tabCargaInanimada.setClosable(false);
+        VBox layoutCargaInanimada = new VBox(20);
+        layoutCargaInanimada.setPadding(new Insets(15));
+
+        TextField txtCodigo = criarCampoNumerico("Código do Drone");
+        TextField txtCustoFixo = criarCampoNumericoDecimal("Custo Fixo");
+        TextField txtAutonomia = criarCampoNumericoDecimal("Autonomia (km)");
+        TextField txtPesoMaximo = criarCampoNumericoDecimal("Peso Máximo (kg)");
+        CheckBox chkTemProtecao = new CheckBox("Possui Proteção");
+
+        Button btnCadastrarInanimada = new Button("Cadastrar");
+        btnCadastrarInanimada.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarInanimada.setDisable(true);
+
+        adicionarValidacaoCompleta(btnCadastrarInanimada,
+                txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo);
+
+        btnCadastrarInanimada.setOnAction(e -> {
+            try {
+                DroneCargaInanimada drone = new DroneCargaInanimada(
+                        Integer.parseInt(txtCodigo.getText()),
+                        Double.parseDouble(txtCustoFixo.getText()),
+                        Double.parseDouble(txtAutonomia.getText()),
+                        Double.parseDouble(txtPesoMaximo.getText()),
+                        chkTemProtecao.isSelected()
+                );
+
+                if (droneGestor.cadastrarDrone(drone)) {
+                    mostrarAlerta("Sucesso", "Drone de Carga Inanimada cadastrado com sucesso!");
+                    limparCampos(txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo);
+                    chkTemProtecao.setSelected(false);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um drone com este código!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutCargaInanimada.getChildren().addAll(
+                txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo,
+                chkTemProtecao, btnCadastrarInanimada
+        );
+
+        tabCargaInanimada.setContent(layoutCargaInanimada);
+        return tabCargaInanimada;
     }
 
-    private Button criarBotao(String texto, javafx.event.EventHandler<javafx.event.ActionEvent> acao) {
-        Button btn = new Button(texto);
-        btn.setStyle(BUTTON_STYLE);
-        btn.setOnMouseEntered(e -> btn.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
-        btn.setOnMouseExited(e -> btn.setStyle(BUTTON_STYLE));
-        btn.setOnAction(acao);
-        return btn;
+    private Tab criarAbaCadastroDroneCargaViva() {
+        Tab tabCargaViva = new Tab("Drone Carga Viva");
+        tabCargaViva.setClosable(false);
+        VBox layoutCargaViva = new VBox(20);
+        layoutCargaViva.setPadding(new Insets(15));
+        tabPane.setTabMinWidth(121.1);
+
+        TextField txtCodigo = criarCampoNumerico("Código do Drone");
+        TextField txtCustoFixo = criarCampoNumericoDecimal("Custo Fixo");
+        TextField txtAutonomia = criarCampoNumericoDecimal("Autonomia (km)");
+        TextField txtPesoMaximo = criarCampoNumericoDecimal("Peso Máximo (kg)");
+        CheckBox chkClimatizado = new CheckBox("É Climatizado");
+
+        Button btnCadastrarViva = new Button("Cadastrar");
+        btnCadastrarViva.setStyle(BUTTON_DISABLED_STYLE);
+        btnCadastrarViva.setDisable(true);
+
+        adicionarValidacaoCompleta(btnCadastrarViva,
+                txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo);
+
+        btnCadastrarViva.setOnAction(e -> {
+            try {
+                DroneCargaViva drone = new DroneCargaViva(
+                        Integer.parseInt(txtCodigo.getText()),
+                        Double.parseDouble(txtCustoFixo.getText()),
+                        Double.parseDouble(txtAutonomia.getText()),
+                        Double.parseDouble(txtPesoMaximo.getText()),
+                        chkClimatizado.isSelected()
+                );
+
+                if (droneGestor.cadastrarDrone(drone)) {
+                    mostrarAlerta("Sucesso", "Drone de Carga Viva cadastrado com sucesso!");
+                    limparCampos(txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo);
+                    chkClimatizado.setSelected(false);
+                } else {
+                    mostrarAlerta("Erro", "Já existe um drone com este código!");
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Erro", "Por favor, verifique os valores numéricos inseridos.");
+            }
+        });
+
+        layoutCargaViva.getChildren().addAll(
+                txtCodigo, txtCustoFixo, txtAutonomia, txtPesoMaximo,
+                chkClimatizado, btnCadastrarViva
+        );
+
+        tabCargaViva.setContent(layoutCargaViva);
+        return tabCargaViva;
     }
 
-    private void cadastrarDrone() {
-        // Lógica de cadastro, pode ser adaptada para o gestor
-        txtMensagens.appendText("Transporte cadastrado com sucesso!\n");
+    private HBox criarBotoesAcao() {
+        HBox botoesAcao = new HBox(15);
+        botoesAcao.setAlignment(Pos.CENTER);
+        botoesAcao.setPadding(new Insets(10));
+
+        Button btnVoltar = new Button("Voltar");
+        btnVoltar.setStyle(BUTTON_STYLE);
+        btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
+        btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
+        btnVoltar.setOnAction(e -> {
+            Menu menu = new Menu();
+            menu.start(primaryStage);
+        });
+
+        botoesAcao.getChildren().add(btnVoltar);
+
+        return botoesAcao;
     }
 
-    private void mostrarMenuPrincipal() {
-        Menu menu = new Menu();
-        menu.start(primaryStage);
+    private TextField criarCampoTexto(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        return txtField;
+    }
+
+    private TextField criarCampoNumerico(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        txtField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                txtField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        return txtField;
+    }
+
+    private TextField criarCampoNumericoDecimal(String texto) {
+        TextField txtField = new TextField();
+        txtField.setPromptText(texto);
+        txtField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                txtField.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+        return txtField;
+    }
+
+    private void adicionarValidacaoCompleta(Button botaoCadastrar, TextField... campos) {
+        for (TextField campo : campos) {
+            campo.textProperty().addListener((observable, oldValue, newValue) -> {
+                verificarCamposPreenchidos(botaoCadastrar, campos);
+            });
+        }
+    }
+
+    private void verificarCamposPreenchidos(Button botaoCadastrar, TextField... campos) {
+        boolean todosCamposPreenchidos = true;
+
+        for (TextField campo : campos) {
+            if (campo.getText().trim().isEmpty()) {
+                todosCamposPreenchidos = false;
+                break;
+            }
+        }
+
+        if (todosCamposPreenchidos) {
+            botaoCadastrar.setStyle(BUTTON_STYLE);
+            botaoCadastrar.setOnMouseEntered(e -> botaoCadastrar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
+            botaoCadastrar.setOnMouseExited(e -> botaoCadastrar.setStyle(BUTTON_STYLE));
+            botaoCadastrar.setDisable(false);
+        } else {
+            botaoCadastrar.setStyle(BUTTON_DISABLED_STYLE);
+            botaoCadastrar.setDisable(true);
+        }
+    }
+
+    private void limparCampos(TextField... campos) {
+        for (TextField campo : campos) {
+            campo.clear();
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }
