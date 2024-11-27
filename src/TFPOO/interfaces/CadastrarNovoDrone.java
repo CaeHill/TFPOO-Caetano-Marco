@@ -1,5 +1,6 @@
 package TFPOO.interfaces;
 
+import TFPOO.gestores.DroneGestor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
