@@ -11,7 +11,9 @@ public class DronePessoal extends Drone {
 		this.qtdMaxPessoas = qtdMaxPessoas;
 	}
 
+	@Override
 	public double calculaCustoKm() {
-		return 0;
+		double custoVariado = 2.00 * qtdMaxPessoas;
+		return getCustoFixo() + custoVariado;
 	}
 }

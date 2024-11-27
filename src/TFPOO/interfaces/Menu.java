@@ -86,7 +86,7 @@ public class Menu extends Application {
     }
 
     private void mostrarRelatorioGeral() {
-        MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage);
+        MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage.getScene());
         relatorio.setPrimaryStage(primaryStage);
         relatorio.mostrarTela();
     }

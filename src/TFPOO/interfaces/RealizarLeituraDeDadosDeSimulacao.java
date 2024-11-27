@@ -203,10 +203,8 @@ public class RealizarLeituraDeDadosDeSimulacao {
             mostrarAlerta("Erro", "Falha ao ler o arquivo de transportes.");
         }
 
-        // Verificar se algum objeto foi cadastrado
         if (algumDroneCadastrado || algumTransporteCadastrado) {
-            // Chamar o relatório geral
-            MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage);
+            MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage.getScene());  // Passando a cena atual (Leitura)
             relatorio.setPrimaryStage(primaryStage);
             relatorio.mostrarTela();
         } else {

@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class MostrarRelatorioGeral {
     private Stage primaryStage;
-    private Stage previousStage; // Tela anterior (de onde viemos)
+    private Scene previousScene; // Armazenar a cena anterior para voltar
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
@@ -26,9 +26,9 @@ public class MostrarRelatorioGeral {
             -fx-cursor: hand;
             """;
 
-    // Construtor agora recebe a tela anterior para redirecionamento do botão "Voltar"
-    public MostrarRelatorioGeral(Stage previousStage) {
-        this.previousStage = previousStage;
+    // Construtor agora recebe a cena anterior para redirecionamento do botão "Voltar"
+    public MostrarRelatorioGeral(Scene previousScene) {
+        this.previousScene = previousScene;
     }
 
     public void setPrimaryStage(Stage stage) {
@@ -59,9 +59,10 @@ public class MostrarRelatorioGeral {
         btnVoltar.setStyle(BUTTON_STYLE);
         btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
+
+        // Definir o comportamento do botão "Voltar"
         btnVoltar.setOnAction(e -> {
-            Menu menu = new Menu();
-            menu.start(primaryStage); // Voltar para a tela do menu
+            primaryStage.setScene(previousScene); // Volta para a cena anterior
         });
 
         botoesAcao.getChildren().add(btnVoltar);
@@ -74,7 +75,7 @@ public class MostrarRelatorioGeral {
                 botoesAcao
         );
 
-        Scene scene = new Scene(layout, 600, 600);
+        Scene scene = new Scene(layout, 800, 600);
         primaryStage.setTitle("Mostrar Relatório Geral");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -96,7 +97,15 @@ public class MostrarRelatorioGeral {
         colunaAutonomia.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getAutonomia()).asObject());
 
-        tabelaDrones.getColumns().addAll(colunaCodigo, colunaCustoFixo, colunaAutonomia);
+        TableColumn<Drone, Double> colunaCustoKm = new TableColumn<>("Custo por Km");
+        colunaCustoKm.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().calculaCustoKm()).asObject());
+
+        TableColumn<Drone, String> colunaTipo = new TableColumn<>("Tipo");
+        colunaTipo.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Drone (Pessoal, Carga Inanimada, Carga Viva)
+
+        tabelaDrones.getColumns().addAll(colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaCustoKm, colunaTipo);
 
         // Adicionando os drones cadastrados
         tabelaDrones.getItems().setAll(droneGestor.getDrones());
@@ -116,15 +125,23 @@ public class MostrarRelatorioGeral {
         colunaCliente.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNomeCliente()));
 
+        TableColumn<Transporte, String> colunaDescricao = new TableColumn<>("Descrição");
+        colunaDescricao.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescricao()));
+
         TableColumn<Transporte, Double> colunaPeso = new TableColumn<>("Peso");
         colunaPeso.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getPeso()).asObject());
 
-        TableColumn<Transporte, String> colunaSituacao = new TableColumn<>("Situação");
-        colunaSituacao.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSituacao().toString()));
+        TableColumn<Transporte, Double> colunaCusto = new TableColumn<>("Custo");
+        colunaCusto.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().calcularCusto()).asObject());
 
-        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaPeso, colunaSituacao);
+        TableColumn<Transporte, String> colunaTipo = new TableColumn<>("Tipo");
+        colunaTipo.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Transporte
+
+        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaCusto, colunaTipo);
 
         // Adicionando os transportes cadastrados
         tabelaTransportes.getItems().setAll(transporteGestor.getTransportes());
