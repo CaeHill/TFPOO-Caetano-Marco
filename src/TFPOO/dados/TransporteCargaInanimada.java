@@ -11,5 +11,6 @@ public class TransporteCargaInanimada extends Transporte {
 		this.cargaPerigosa = cargaPerigosa;
 	}
 
-	public void calcularCusto() {}
+	@Override
+	public double calcularCusto() { return 0; }
 }

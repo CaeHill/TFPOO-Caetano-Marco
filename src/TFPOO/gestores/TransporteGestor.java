@@ -13,22 +13,7 @@ public class TransporteGestor {
                 return false; // Número já cadastrado
             }
         }
-        transporte.calcularCusto(); // Calcula o custo antes de adicionar
-        transportes.add(transporte); // Adiciona o transporte à lista
+        transportes.add(transporte);
         return true;
-    }
-
-    public String listarTodosTransportes() {
-        if (transportes.isEmpty()) {
-            return "Nenhum transporte cadastrado.";
-        }
-        StringBuilder sb = new StringBuilder("Transportes Cadastrados:\n");
-        for (Transporte t : transportes) {
-            if (t instanceof TransportePessoal) {
-                TransportePessoal tp = (TransportePessoal) t;
-                sb.append(tp.toString()).append("\n");
-            }
-        }
-        return sb.toString();
     }
 }

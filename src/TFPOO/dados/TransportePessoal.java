@@ -12,21 +12,5 @@ public class TransportePessoal extends Transporte {
 	}
 
 	@Override
-	public String toString() {
-		return "TransportePessoas{" +
-				"numero=" + getNumero() +
-				", cliente='" + getNomeCliente() + '\'' +
-				", descricao='" + getDescricao() + '\'' +
-				", passageiros=" + qtdPassageiros +
-				", custoFinal=" + getCustoFinal() +
-				'}';
-	}
-
-	@Override
-	public void calcularCusto() {
-		double distancia = Math.sqrt(Math.pow(getLatitudeDestino() - getLatitudeOrigem(), 2) +
-				Math.pow(getLongitudeDestino() - getLongitudeOrigem(), 2));
-		double custo = distancia * 10 + qtdPassageiros * 10;
-		setCustoFinal(custo);
-	}
+	public double calcularCusto() { return 0; }
 }
