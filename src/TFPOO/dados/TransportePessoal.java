@@ -24,4 +24,7 @@ public class TransportePessoal extends Transporte {
 		double acrescimo = 10.00 * qtdPassageiros;
 		return custoTransporte + acrescimo;
 	}
+
+	//Getters
+	public int getQtdPassageiros() { return qtdPassageiros; }
 }

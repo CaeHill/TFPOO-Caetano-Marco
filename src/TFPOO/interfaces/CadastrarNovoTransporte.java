@@ -45,17 +45,14 @@ public class CadastrarNovoTransporte {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        // Criar TabPane para diferentes tipos de transporte
         tabPane = new TabPane();
 
-        // Adicionar abas para cada tipo de transporte
         Tab tabPessoal = criarAbaCadastroTransportePessoal();
         Tab tabCargaInanimada = criarAbaCadastroTransporteCargaInanimada();
         Tab tabCargaViva = criarAbaCadastroTransporteCargaViva();
 
         tabPane.getTabs().addAll(tabPessoal, tabCargaInanimada, tabCargaViva);
 
-        // Botões de ação
         HBox botoesAcao = criarBotoesAcao();
 
         layout.getChildren().addAll(tabPane, botoesAcao);
@@ -72,7 +69,6 @@ public class CadastrarNovoTransporte {
         VBox layoutPessoal = new VBox(20);
         layoutPessoal.setPadding(new Insets(15));
 
-        // Campos de texto para Transporte Pessoal
         TextField txtNumero = criarCampoNumerico("Número do Transporte");
         TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
         TextField txtDescricao = criarCampoTexto("Descrição");
@@ -87,7 +83,6 @@ public class CadastrarNovoTransporte {
         btnCadastrarPessoal.setStyle(BUTTON_DISABLED_STYLE);
         btnCadastrarPessoal.setDisable(true);
 
-        // Adicionar listeners para habilitar/desabilitar botão
         adicionarValidacaoCompleta(btnCadastrarPessoal,
                 txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                 txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
@@ -137,7 +132,6 @@ public class CadastrarNovoTransporte {
         VBox layoutCargaInanimada = new VBox(20);
         layoutCargaInanimada.setPadding(new Insets(15));
 
-        // Campos de texto para Carga Inanimada
         TextField txtNumero = criarCampoNumerico("Número do Transporte");
         TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
         TextField txtDescricao = criarCampoTexto("Descrição");
@@ -153,7 +147,6 @@ public class CadastrarNovoTransporte {
         btnCadastrarInanimada.setStyle(BUTTON_DISABLED_STYLE);
         btnCadastrarInanimada.setDisable(true);
 
-        // Adicionar listeners para habilitar/desabilitar botão
         adicionarValidacaoCompleta(btnCadastrarInanimada,
                 txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                 txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino);
@@ -204,7 +197,6 @@ public class CadastrarNovoTransporte {
         layoutCargaViva.setPadding(new Insets(15));
         tabPane.setTabMinWidth(121.1);
 
-        // Campos de texto para Carga Viva
         TextField txtNumero = criarCampoNumerico("Número do Transporte");
         TextField txtNomeCliente = criarCampoTexto("Nome do Cliente");
         TextField txtDescricao = criarCampoTexto("Descrição");
@@ -220,7 +212,6 @@ public class CadastrarNovoTransporte {
         btnCadastrarViva.setStyle(BUTTON_DISABLED_STYLE);
         btnCadastrarViva.setDisable(true);
 
-        // Adicionar listeners para habilitar/desabilitar botão
         adicionarValidacaoCompleta(btnCadastrarViva,
                 txtNumero, txtNomeCliente, txtDescricao, txtPeso,
                 txtLatOrigem, txtLatDestino, txtLongOrigem, txtLongDestino,
@@ -294,7 +285,6 @@ public class CadastrarNovoTransporte {
         TextField txtField = new TextField();
         txtField.setPromptText(texto);
         txtField.textProperty().addListener((observable, oldValue, newValue) -> {
-            // Permitir apenas números inteiros
             if (!newValue.matches("\\d*")) {
                 txtField.setText(newValue.replaceAll("[^\\d]", ""));
             }
@@ -306,7 +296,6 @@ public class CadastrarNovoTransporte {
         TextField txtField = new TextField();
         txtField.setPromptText(texto);
         txtField.textProperty().addListener((observable, oldValue, newValue) -> {
-            // Permitir apenas números e um ponto decimal
             if (!newValue.matches("\\d*\\.?\\d*")) {
                 txtField.setText(newValue.replaceAll("[^\\d.]", ""));
             }
@@ -315,7 +304,6 @@ public class CadastrarNovoTransporte {
     }
 
     private void adicionarValidacaoCompleta(Button botaoCadastrar, TextField... campos) {
-        // Adiciona listeners para todos os campos para verificar quando todos estão preenchidos
         for (TextField campo : campos) {
             campo.textProperty().addListener((observable, oldValue, newValue) -> {
                 verificarCamposPreenchidos(botaoCadastrar, campos);
@@ -333,7 +321,6 @@ public class CadastrarNovoTransporte {
             }
         }
 
-        // Atualizar estilo e estado do botão
         if (todosCamposPreenchidos) {
             botaoCadastrar.setStyle(BUTTON_STYLE);
             botaoCadastrar.setOnMouseEntered(e -> botaoCadastrar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));

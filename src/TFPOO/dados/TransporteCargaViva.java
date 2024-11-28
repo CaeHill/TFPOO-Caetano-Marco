@@ -26,4 +26,8 @@ public class TransporteCargaViva extends Transporte {
 		double acrescimo = (temperaturaMaxima - temperaturaMinima) > 10.00 ? 1000.00 : 0.00;
 		return custoTransporte + acrescimo;
 	}
+
+	//Getters
+	public double getTemperaturaMinima() { return temperaturaMinima; }
+	public double getTemperaturaMaxima() { return temperaturaMaxima; }
 }

@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class MostrarRelatorioGeral {
     private Stage primaryStage;
-    private Scene previousScene; // Armazenar a cena anterior para voltar
+    private Scene previousScene;
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
@@ -26,7 +26,6 @@ public class MostrarRelatorioGeral {
             -fx-cursor: hand;
             """;
 
-    // Construtor agora recebe a cena anterior para redirecionamento do botão "Voltar"
     public MostrarRelatorioGeral(Scene previousScene) {
         this.previousScene = previousScene;
     }
@@ -40,17 +39,13 @@ public class MostrarRelatorioGeral {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        // Acessando os gestores globais
         DroneGestor droneGestor = SistemaGestores.getDroneGestor();
         TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
 
-        // Tabela para exibir Drones
         TableView<Drone> tabelaDrones = criarTabelaDrones(droneGestor);
 
-        // Tabela para exibir Transportes
         TableView<Transporte> tabelaTransportes = criarTabelaTransportes(transporteGestor);
 
-        // Botões de ação
         HBox botoesAcao = new HBox(15);
         botoesAcao.setAlignment(Pos.CENTER);
         botoesAcao.setPadding(new Insets(10));
@@ -60,9 +55,8 @@ public class MostrarRelatorioGeral {
         btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
 
-        // Definir o comportamento do botão "Voltar"
         btnVoltar.setOnAction(e -> {
-            primaryStage.setScene(previousScene); // Volta para a cena anterior
+            primaryStage.setScene(previousScene);
         });
 
         botoesAcao.getChildren().add(btnVoltar);
@@ -84,7 +78,6 @@ public class MostrarRelatorioGeral {
     private TableView<Drone> criarTabelaDrones(DroneGestor droneGestor) {
         TableView<Drone> tabelaDrones = new TableView<>();
 
-        // Definindo as colunas
         TableColumn<Drone, Integer> colunaCodigo = new TableColumn<>("Código");
         colunaCodigo.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCodigo()).asObject());
@@ -103,11 +96,10 @@ public class MostrarRelatorioGeral {
 
         TableColumn<Drone, String> colunaTipo = new TableColumn<>("Tipo");
         colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Drone (Pessoal, Carga Inanimada, Carga Viva)
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
 
         tabelaDrones.getColumns().addAll(colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaCustoKm, colunaTipo);
 
-        // Adicionando os drones cadastrados
         tabelaDrones.getItems().setAll(droneGestor.getDrones());
 
         return tabelaDrones;
@@ -135,11 +127,10 @@ public class MostrarRelatorioGeral {
 
         TableColumn<Transporte, String> colunaTipo = new TableColumn<>("Tipo");
         colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Transporte
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
 
         tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaTipo);
 
-        // Adicionando os transportes cadastrados
         tabelaTransportes.getItems().setAll(transporteGestor.getTransportes());
 
         return tabelaTransportes;

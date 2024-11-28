@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 public class ProcessarTransportesPendentes {
     private Stage primaryStage;
-    private Scene previousScene; // Armazenar a cena anterior para voltar
+    private Scene previousScene;
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
@@ -28,7 +28,6 @@ public class ProcessarTransportesPendentes {
             -fx-cursor: hand;
             """;
 
-    // Construtor agora recebe a cena anterior para redirecionamento do botão "Voltar"
     public ProcessarTransportesPendentes(Scene previousScene) {
         this.previousScene = previousScene;
     }
@@ -42,14 +41,11 @@ public class ProcessarTransportesPendentes {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        // Acessando os gestores globais através do SistemaGestores
         TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
         DroneGestor droneGestor = SistemaGestores.getDroneGestor();
 
-        // Tabela para exibir Transportes Pendentes
         TableView<Transporte> tabelaTransportes = criarTabelaTransportesPendentes(transporteGestor);
 
-        // Botões de ação
         HBox botoesAcao = new HBox(15);
         botoesAcao.setAlignment(Pos.CENTER);
         botoesAcao.setPadding(new Insets(10));
@@ -59,13 +55,12 @@ public class ProcessarTransportesPendentes {
         btnProcessar.setOnMouseEntered(e -> btnProcessar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
         btnProcessar.setOnMouseExited(e -> btnProcessar.setStyle(BUTTON_STYLE));
 
-        // Lógica para processar transportes pendentes
         btnProcessar.setOnAction(e -> {
             if (transporteGestor.getTransportesPendentes().isEmpty()) {
                 mostrarAlerta("Erro", "Não há transportes pendentes para processar.");
             } else {
                 transporteGestor.processarTransportesPendentes();
-                tabelaTransportes.refresh();  // Atualiza a tabela após o processamento
+                tabelaTransportes.refresh();
             }
         });
 
@@ -74,9 +69,8 @@ public class ProcessarTransportesPendentes {
         btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
 
-        // Comportamento do botão "Voltar"
         btnVoltar.setOnAction(e -> {
-            primaryStage.setScene(previousScene); // Volta para a cena anterior
+            primaryStage.setScene(previousScene);
         });
 
         botoesAcao.getChildren().addAll(btnProcessar, btnVoltar);
@@ -96,7 +90,6 @@ public class ProcessarTransportesPendentes {
     private TableView<Transporte> criarTabelaTransportesPendentes(TransporteGestor transporteGestor) {
         TableView<Transporte> tabelaTransportes = new TableView<>();
 
-        // Definindo as colunas
         TableColumn<Transporte, Integer> colunaNumero = new TableColumn<>("Número");
         colunaNumero.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getNumero()).asObject());
@@ -111,13 +104,11 @@ public class ProcessarTransportesPendentes {
 
         tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaSituacao);
 
-        // Adicionando os transportes pendentes
         tabelaTransportes.getItems().setAll(transporteGestor.getTransportesPendentes());
 
         return tabelaTransportes;
     }
 
-    // Método para mostrar alertas
     private void mostrarAlerta(String titulo, String mensagem) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
