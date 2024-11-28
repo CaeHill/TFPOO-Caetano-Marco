@@ -4,7 +4,7 @@ import TFPOO.dados.*;
 import java.util.*;
 
 public class TransporteGestor {
-    private Set<Transporte> transportes = new HashSet<>();
+    private List<Transporte> transportes = new LinkedList<>();
     private Queue<Transporte> transportesPendentes = new LinkedList<>();
     private List<Transporte> transportesAlocados = new LinkedList<>();
 
@@ -22,10 +22,6 @@ public class TransporteGestor {
         if (transporte.getSituacao() == Estado.PENDENTE) {
             transportesPendentes.add(transporte);
         }
-    }
-
-    public Queue<Transporte> getTransportesPendentes() {
-        return transportesPendentes;
     }
 
     public void recolocarTransporteNaFilaPendentes(Transporte transporte) {
@@ -51,7 +47,27 @@ public class TransporteGestor {
         return !transportesPendentes.isEmpty();
     }
 
-    public Set<Transporte> getTransportes() {
+    public void adicionarTransporte(Transporte transporte) {
+        transportes.add(transporte);
+        if (transporte.getSituacao() == Estado.PENDENTE) {
+            transportesPendentes.add(transporte);
+        }
+    }
+
+    public void atualizarFilaPendentes() {
+        transportesPendentes.clear();
+        for (Transporte transporte : transportes) {
+            if (transporte.getSituacao() == Estado.PENDENTE) {
+                transportesPendentes.add(transporte);
+            }
+        }
+    }
+
+    public List<Transporte> getTodosTransportes() {
         return transportes;
+    }
+
+    public Queue<Transporte> getTransportesPendentes() {
+        return transportesPendentes;
     }
 }

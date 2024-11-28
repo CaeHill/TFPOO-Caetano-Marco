@@ -197,7 +197,7 @@ public class MostrarRelatorioGeral {
                 colunaSituacao, colunaEspecifica, colunaCusto
         );
 
-        tabelaTransportes.getItems().setAll(transporteGestor.getTransportesPendentes());
+        tabelaTransportes.getItems().setAll(transporteGestor.getTodosTransportes());
 
         return tabelaTransportes;
     }

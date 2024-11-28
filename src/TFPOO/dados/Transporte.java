@@ -52,7 +52,7 @@ public abstract class Transporte {
 
 	public abstract double calcularCusto();
 
-	//Getters e setters
+	//Getters
 	public int getNumero() { return numero; }
 	public String getNomeCliente() { return nomeCliente; }
 	public String getDescricao() { return descricao; }
@@ -63,4 +63,8 @@ public abstract class Transporte {
 	public double getLongitudeDestino() { return longitudeDestino; }
 	public Estado getSituacao() { return situacao; }
 	public Drone getDrone() { return drone; }
+
+	//Setters
+	public void setSituacao(Estado situacao) { this.situacao = situacao; }
+	public void setDrone (Drone drone) { this.drone = drone; }
 }

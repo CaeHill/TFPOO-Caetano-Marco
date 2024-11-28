@@ -12,6 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ProcessarTransportesPendentes {
     private Stage primaryStage;
     private Scene previousScene;
@@ -59,8 +62,7 @@ public class ProcessarTransportesPendentes {
             if (transporteGestor.getTransportesPendentes().isEmpty()) {
                 mostrarAlerta("Erro", "Não há transportes pendentes para processar.");
             } else {
-                transporteGestor.processarTransportesPendentes();
-                tabelaTransportes.refresh();
+                processarTransportesPendentes(transporteGestor, droneGestor, tabelaTransportes);
             }
         });
 
@@ -107,6 +109,32 @@ public class ProcessarTransportesPendentes {
         tabelaTransportes.getItems().setAll(transporteGestor.getTransportesPendentes());
 
         return tabelaTransportes;
+    }
+
+    private void processarTransportesPendentes(TransporteGestor transporteGestor, DroneGestor droneGestor, TableView<Transporte> tabelaTransportes) {
+        List<String> alocados = new LinkedList<>();
+        List<String> naoAlocados = new LinkedList<>();
+
+        for (Transporte transporte : transporteGestor.getTransportesPendentes()) {
+            boolean alocado = droneGestor.alocarDroneParaTransporte(transporte);
+
+            if (alocado) {
+                transporte.setSituacao(Estado.ALOCADO);
+                alocados.add("Transporte " + transporte.getNumero() + " (Cliente: " + transporte.getNomeCliente() + ")");
+            } else {
+                naoAlocados.add("Transporte " + transporte.getNumero() + " (Cliente: " + transporte.getNomeCliente() + ")");
+            }
+        }
+
+        if (!alocados.isEmpty()) {
+            mostrarAlerta("Sucesso", "Os seguintes transportes foram alocados:\n" + String.join("\n", alocados));
+        }
+        if (!naoAlocados.isEmpty()) {
+            mostrarAlerta("Aviso", "Não foi possível alocar drones para os seguintes transportes:\n" + String.join("\n", naoAlocados));
+        }
+
+        transporteGestor.atualizarFilaPendentes();
+        tabelaTransportes.getItems().setAll(transporteGestor.getTransportesPendentes());
     }
 
     private void mostrarAlerta(String titulo, String mensagem) {
