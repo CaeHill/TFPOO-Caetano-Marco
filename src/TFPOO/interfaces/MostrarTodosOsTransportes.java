@@ -64,7 +64,7 @@ public class MostrarTodosOsTransportes {
                 botoesAcao
         );
 
-        Scene scene = new Scene(layout, 1000, 600);
+        Scene scene = new Scene(layout, 1200, 800);
         primaryStage.setTitle("Mostrar Todos os Transportes");
         primaryStage.setScene(scene);
         primaryStage.show();

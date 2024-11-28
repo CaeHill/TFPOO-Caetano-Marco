@@ -1,7 +1,9 @@
 package TFPOO.interfaces;
 
 import TFPOO.dados.*;
-import TFPOO.gestores.*;
+import TFPOO.gestores.SistemaGestores;
+import TFPOO.gestores.DroneGestor;
+import TFPOO.gestores.TransporteGestor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -39,12 +41,12 @@ public class MostrarRelatorioGeral {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        DroneGestor droneGestor = SistemaGestores.getDroneGestor();
         TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
-
-        TableView<Drone> tabelaDrones = criarTabelaDrones(droneGestor);
+        DroneGestor droneGestor = SistemaGestores.getDroneGestor();
 
         TableView<Transporte> tabelaTransportes = criarTabelaTransportes(transporteGestor);
+
+        TableView<Drone> tabelaDrones = criarTabelaDrones(droneGestor);
 
         HBox botoesAcao = new HBox(15);
         botoesAcao.setAlignment(Pos.CENTER);
@@ -59,18 +61,19 @@ public class MostrarRelatorioGeral {
             primaryStage.setScene(previousScene);
         });
 
-        botoesAcao.getChildren().add(btnVoltar);
+        botoesAcao.getChildren().addAll(btnVoltar);
 
         layout.getChildren().addAll(
-                new Label("Relatório de Drones Cadastrados"),
-                tabelaDrones,
-                new Label("Relatório de Transportes Cadastrados"),
+                new Label("Relatório Geral: Transportes e Drones"),
+                new Label("Transportes"),
                 tabelaTransportes,
+                new Label("Drones"),
+                tabelaDrones,
                 botoesAcao
         );
 
-        Scene scene = new Scene(layout, 800, 600);
-        primaryStage.setTitle("Mostrar Relatório Geral");
+        Scene scene = new Scene(layout, 1200, 800);
+        primaryStage.setTitle("Relatório Geral");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -90,18 +93,38 @@ public class MostrarRelatorioGeral {
         colunaAutonomia.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getAutonomia()).asObject());
 
+        TableColumn<Drone, String> colunaEspecifica = new TableColumn<>("Específica");
+        colunaEspecifica.setCellValueFactory(cellData -> {
+            Drone d = cellData.getValue();
+            if (d instanceof DronePessoal) {
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Qtd Pessoas: " + ((DronePessoal) d).getQtdMaxPessoas()
+                );
+            } else if (d instanceof DroneCargaInanimada) {
+                DroneCargaInanimada cargaInanimada = (DroneCargaInanimada) d;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Peso Máx: " + cargaInanimada.getPesoMaximo() +
+                                ", Proteção: " + cargaInanimada.isProtecao()
+                );
+            } else if (d instanceof DroneCargaViva) {
+                DroneCargaViva cargaViva = (DroneCargaViva) d;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Peso Máx: " + cargaViva.getPesoMaximo() +
+                                ", Climatizado: " + cargaViva.isClimatizado()
+                );
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
         TableColumn<Drone, Double> colunaCustoKm = new TableColumn<>("Custo por Km");
         colunaCustoKm.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().calculaCustoKm()).asObject());
 
-        TableColumn<Drone, String> colunaTipo = new TableColumn<>("Tipo");
-        colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
-
-        tabelaDrones.getColumns().addAll(colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaCustoKm, colunaTipo);
+        tabelaDrones.getColumns().addAll(
+                colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaEspecifica, colunaCustoKm
+        );
 
         tabelaDrones.getItems().setAll(droneGestor.getDrones());
-
         return tabelaDrones;
     }
 
