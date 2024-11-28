@@ -92,7 +92,7 @@ public class Menu extends Application {
     }
 
     private void mostrarTelaMostrarTodosOsTransportes() {
-        MostrarTodosOsTransportes mostrarTransportes = new MostrarTodosOsTransportes(primaryStage.getScene());  // Passando a cena atual (Menu)
+        MostrarTodosOsTransportes mostrarTransportes = new MostrarTodosOsTransportes(primaryStage.getScene());
         mostrarTransportes.setPrimaryStage(primaryStage);
         mostrarTransportes.mostrarTela();
     }
