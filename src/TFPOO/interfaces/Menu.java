@@ -39,7 +39,7 @@ public class Menu extends Application {
         Button btnProcessarPendentes = criarBotao("Transportes Pendentes", e -> mostrarTelaProcessarTransportesPendentes());
         Button btnRelatorio = criarBotao("Mostrar Relatório Geral", e -> mostrarRelatorioGeral());
         Button btnMostrarTransportes = criarBotao("Todos os Transportes", e -> mostrarTelaMostrarTodosOsTransportes());
-        Button btnAlterarSituacao = criarBotao("Alterar Situação", e -> System.out.println("Alterar Situação"));
+        Button btnAlterarSituacao = criarBotao("Alterar Situação", e -> mostrarTelaAlterarASituacaoDeUmTransporte());
         Button btnLeituraSimulacao = criarBotao("Leitura de Simulação", e -> mostrarTelaRealizarLeituraSimulacao());
         Button btnSalvarDados = criarBotao("Salvar Dados", e -> System.out.println("Salvar Dados"));
         Button btnCarregarDados = criarBotao("Carregar Dados", e -> System.out.println("Carregar Dados"));
@@ -101,6 +101,12 @@ public class Menu extends Application {
         ProcessarTransportesPendentes processarTransportes = new ProcessarTransportesPendentes(primaryStage.getScene());
         processarTransportes.setPrimaryStage(primaryStage);
         processarTransportes.mostrarTela();
+    }
+
+    public void mostrarTelaAlterarASituacaoDeUmTransporte() {
+        AlterarASituacaoDeUmTransporte alterarASituacaoDeUmTransporte = new AlterarASituacaoDeUmTransporte(primaryStage.getScene());
+        alterarASituacaoDeUmTransporte.setPrimaryStage(primaryStage);
+        alterarASituacaoDeUmTransporte.mostrarTela();
     }
 
     public void mostrarTelaRealizarLeituraSimulacao() {
