@@ -41,8 +41,8 @@ public class Menu extends Application {
         Button btnMostrarTransportes = criarBotao("Todos os Transportes", e -> mostrarTelaMostrarTodosOsTransportes());
         Button btnAlterarSituacao = criarBotao("Alterar Situação", e -> mostrarTelaAlterarASituacaoDeUmTransporte());
         Button btnLeituraSimulacao = criarBotao("Leitura de Simulação", e -> mostrarTelaRealizarLeituraSimulacao());
-        Button btnSalvarDados = criarBotao("Salvar Dados", e -> System.out.println("Salvar Dados"));
-        Button btnCarregarDados = criarBotao("Carregar Dados", e -> System.out.println("Carregar Dados"));
+        Button btnSalvarDados = criarBotao("Salvar Dados", e -> mostrarTelaSalvaDados());
+        Button btnCarregarDados = criarBotao("Carregar Dados", e -> mostrarTelaCarregarDados());
         Button btnFinalizar = criarBotao("Finalizar", e -> primaryStage.close());
 
         menuLayout.getChildren().addAll(
@@ -113,6 +113,18 @@ public class Menu extends Application {
         RealizarLeituraDeDadosDeSimulacao rl = new RealizarLeituraDeDadosDeSimulacao();
         rl.setPrimaryStage(primaryStage);
         rl.mostrarTela();
+    }
+
+    public void mostrarTelaSalvaDados() {
+        SalvarDados salvarDados = new SalvarDados(primaryStage.getScene());
+        salvarDados.setPrimaryStage(primaryStage);
+        salvarDados.mostrarTela();
+    }
+
+    public void mostrarTelaCarregarDados() {
+        CarregarDados carregarDados = new CarregarDados(primaryStage.getScene());
+        carregarDados.setPrimaryStage(primaryStage);
+        carregarDados.mostrarTela();
     }
 
     public static void main(String[] args) {
