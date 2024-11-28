@@ -108,7 +108,6 @@ public class MostrarRelatorioGeral {
     private TableView<Transporte> criarTabelaTransportes(TransporteGestor transporteGestor) {
         TableView<Transporte> tabelaTransportes = new TableView<>();
 
-        // Definindo as colunas
         TableColumn<Transporte, Integer> colunaNumero = new TableColumn<>("Número");
         colunaNumero.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getNumero()).asObject());
@@ -125,13 +124,57 @@ public class MostrarRelatorioGeral {
         colunaPeso.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getPeso()).asObject());
 
-        TableColumn<Transporte, String> colunaTipo = new TableColumn<>("Tipo");
-        colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
+        TableColumn<Transporte, Double> colunaLatitudeOrigem = new TableColumn<>("Lat. Origem");
+        colunaLatitudeOrigem.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLatitudeOrigem()).asObject());
 
-        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaTipo);
+        TableColumn<Transporte, Double> colunaLatitudeDestino = new TableColumn<>("Lat. Destino");
+        colunaLatitudeDestino.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLatitudeDestino()).asObject());
 
-        tabelaTransportes.getItems().setAll(transporteGestor.getTransportes());
+        TableColumn<Transporte, Double> colunaLongitudeOrigem = new TableColumn<>("Long. Origem");
+        colunaLongitudeOrigem.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLongitudeOrigem()).asObject());
+
+        TableColumn<Transporte, Double> colunaLongitudeDestino = new TableColumn<>("Long. Destino");
+        colunaLongitudeDestino.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLongitudeDestino()).asObject());
+
+        TableColumn<Transporte, Estado> colunaSituacao = new TableColumn<>("Situação");
+        colunaSituacao.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getSituacao()));
+
+        TableColumn<Transporte, String> colunaEspecifica = new TableColumn<>("Específica");
+        colunaEspecifica.setCellValueFactory(cellData -> {
+            Transporte t = cellData.getValue();
+            if (t instanceof TransportePessoal) {
+                return new javafx.beans.property.SimpleStringProperty(String.valueOf(((TransportePessoal) t).getQtdPassageiros()));
+            } else if (t instanceof TransporteCargaInanimada) {
+                return new javafx.beans.property.SimpleStringProperty(String.valueOf(((TransporteCargaInanimada) t).isCargaPerigosa()));
+            } else if (t instanceof TransporteCargaViva) {
+                TransporteCargaViva cargaViva = (TransporteCargaViva) t;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Temp Min: " + cargaViva.getTemperaturaMinima() + ", Temp Max: " + cargaViva.getTemperaturaMaxima());
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
+        TableColumn<Transporte, Double> colunaCusto = new TableColumn<>("Custo");
+        colunaCusto.setCellValueFactory(cellData -> {
+            Transporte t = cellData.getValue();
+            if (t.getSituacao() == Estado.ALOCADO) {
+                return new javafx.beans.property.SimpleDoubleProperty(t.calcularCusto()).asObject();
+            }
+            return new javafx.beans.property.SimpleDoubleProperty(0).asObject();
+        });
+
+        tabelaTransportes.getColumns().addAll(
+                colunaNumero, colunaCliente, colunaDescricao, colunaPeso,
+                colunaLatitudeOrigem, colunaLatitudeDestino, colunaLongitudeOrigem, colunaLongitudeDestino,
+                colunaSituacao, colunaEspecifica, colunaCusto
+        );
+
+        tabelaTransportes.getItems().setAll(transporteGestor.getTransportesPendentes());
 
         return tabelaTransportes;
     }

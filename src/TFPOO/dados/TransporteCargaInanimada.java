@@ -26,5 +26,5 @@ public class TransporteCargaInanimada extends Transporte {
 	}
 
 	//Getters
-	public boolean getCargaPerigosa() { return cargaPerigosa; }
+	public boolean isCargaPerigosa() { return cargaPerigosa; }
 }
