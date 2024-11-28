@@ -16,4 +16,7 @@ public class DroneCargaInanimada extends DroneCarga {
 		double custoVariado = protecao ? 10.00 : 5.00;
 		return getCustoFixo() + custoVariado;
 	}
+
+	//Getters
+	public boolean isProtecao() { return protecao; }
 }

@@ -16,4 +16,7 @@ public class DronePessoal extends Drone {
 		double custoVariado = 2.00 * qtdMaxPessoas;
 		return getCustoFixo() + custoVariado;
 	}
+
+	//Getters
+	public int getQtdMaxPessoas() { return qtdMaxPessoas; }
 }

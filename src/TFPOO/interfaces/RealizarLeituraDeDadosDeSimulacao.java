@@ -107,7 +107,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(";");
-                if (dados[0].equals("1")) { // Drone Pessoal
+                if (dados[0].equals("1")) {
                     DronePessoal drone = new DronePessoal(
                             Integer.parseInt(dados[1]),
                             Double.parseDouble(dados[2]),
@@ -116,7 +116,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                     );
                     droneGestor.cadastrarDrone(drone);
                     algumDroneCadastrado = true;
-                } else if (dados[0].equals("2")) { // Drone Carga Inanimada
+                } else if (dados[0].equals("2")) {
                     DroneCargaInanimada drone = new DroneCargaInanimada(
                             Integer.parseInt(dados[1]),
                             Double.parseDouble(dados[2]),
@@ -126,7 +126,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                     );
                     droneGestor.cadastrarDrone(drone);
                     algumDroneCadastrado = true;
-                } else if (dados[0].equals("3")) { // Drone Carga Viva
+                } else if (dados[0].equals("3")) {
                     DroneCargaViva drone = new DroneCargaViva(
                             Integer.parseInt(dados[1]),
                             Double.parseDouble(dados[2]),
@@ -146,7 +146,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(";");
-                if (dados[0].equals("1")) { // Transporte Pessoal
+                if (dados[0].equals("1")) {
                     TransportePessoal transporte = new TransportePessoal(
                             Integer.parseInt(dados[1]),
                             dados[2],
@@ -162,7 +162,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                         transporteGestor.adicionarTransportePendentes(transporte);
                         algumTransporteCadastrado = true;
                     }
-                } else if (dados[0].equals("2")) { // Transporte Carga Inanimada
+                } else if (dados[0].equals("2")) {
                     TransporteCargaInanimada transporte = new TransporteCargaInanimada(
                             Integer.parseInt(dados[1]),
                             dados[2],
@@ -178,7 +178,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
                         transporteGestor.adicionarTransportePendentes(transporte);
                         algumTransporteCadastrado = true;
                     }
-                } else if (dados[0].equals("3")) { // Transporte Carga Viva
+                } else if (dados[0].equals("3")) {
                     TransporteCargaViva transporte = new TransporteCargaViva(
                             Integer.parseInt(dados[1]),
                             dados[2],
@@ -202,7 +202,7 @@ public class RealizarLeituraDeDadosDeSimulacao {
         }
 
         if (algumDroneCadastrado || algumTransporteCadastrado) {
-            MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage.getScene());  // Passando a cena atual (Leitura)
+            MostrarRelatorioGeral relatorio = new MostrarRelatorioGeral(primaryStage.getScene());
             relatorio.setPrimaryStage(primaryStage);
             relatorio.mostrarTela();
         } else {

@@ -11,4 +11,6 @@ public abstract class DroneCarga extends Drone {
 		this.pesoMaximo = pesoMaximo;
 	}
 
+	//Getters
+	public double getPesoMaximo() { return pesoMaximo; }
 }

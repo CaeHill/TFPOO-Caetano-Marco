@@ -28,7 +28,7 @@ public abstract class Transporte {
 	}
 
 	public double calcularDistancia() {
-		final double R = 6371.0;  // Raio da Terra em quilômetros
+		final double R = 6371.0;
 		double lat1 = Math.toRadians(getLatitudeOrigem());
 		double lon1 = Math.toRadians(getLongitudeOrigem());
 		double lat2 = Math.toRadians(getLatitudeDestino());
@@ -42,7 +42,7 @@ public abstract class Transporte {
 						Math.sin(dlon / 2) * Math.sin(dlon / 2);
 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		return R * c;  // Distância em quilômetros
+		return R * c;
 	}
 
 	public void alocarDrone(Drone drone) {
@@ -52,7 +52,7 @@ public abstract class Transporte {
 
 	public abstract double calcularCusto();
 
-	//Getters e setters
+	//Getters
 	public int getNumero() { return numero; }
 	public String getNomeCliente() { return nomeCliente; }
 	public String getDescricao() { return descricao; }
@@ -63,4 +63,8 @@ public abstract class Transporte {
 	public double getLongitudeDestino() { return longitudeDestino; }
 	public Estado getSituacao() { return situacao; }
 	public Drone getDrone() { return drone; }
+
+	//Setters
+	public void setSituacao(Estado situacao) { this.situacao = situacao; }
+	public void setDrone (Drone drone) { this.drone = drone; }
 }

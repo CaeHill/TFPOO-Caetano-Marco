@@ -1,7 +1,9 @@
 package TFPOO.interfaces;
 
 import TFPOO.dados.*;
-import TFPOO.gestores.*;
+import TFPOO.gestores.SistemaGestores;
+import TFPOO.gestores.DroneGestor;
+import TFPOO.gestores.TransporteGestor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +14,7 @@ import javafx.stage.Stage;
 
 public class MostrarRelatorioGeral {
     private Stage primaryStage;
-    private Scene previousScene; // Armazenar a cena anterior para voltar
+    private Scene previousScene;
 
     private final String BUTTON_STYLE = """
             -fx-background-color: #1976D2FF;
@@ -26,7 +28,6 @@ public class MostrarRelatorioGeral {
             -fx-cursor: hand;
             """;
 
-    // Construtor agora recebe a cena anterior para redirecionamento do botão "Voltar"
     public MostrarRelatorioGeral(Scene previousScene) {
         this.previousScene = previousScene;
     }
@@ -40,17 +41,13 @@ public class MostrarRelatorioGeral {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
-        // Acessando os gestores globais
-        DroneGestor droneGestor = SistemaGestores.getDroneGestor();
         TransporteGestor transporteGestor = SistemaGestores.getTransporteGestor();
+        DroneGestor droneGestor = SistemaGestores.getDroneGestor();
 
-        // Tabela para exibir Drones
-        TableView<Drone> tabelaDrones = criarTabelaDrones(droneGestor);
-
-        // Tabela para exibir Transportes
         TableView<Transporte> tabelaTransportes = criarTabelaTransportes(transporteGestor);
 
-        // Botões de ação
+        TableView<Drone> tabelaDrones = criarTabelaDrones(droneGestor);
+
         HBox botoesAcao = new HBox(15);
         botoesAcao.setAlignment(Pos.CENTER);
         botoesAcao.setPadding(new Insets(10));
@@ -60,23 +57,23 @@ public class MostrarRelatorioGeral {
         btnVoltar.setOnMouseEntered(e -> btnVoltar.setStyle(BUTTON_STYLE + BUTTON_HOVER_STYLE));
         btnVoltar.setOnMouseExited(e -> btnVoltar.setStyle(BUTTON_STYLE));
 
-        // Definir o comportamento do botão "Voltar"
         btnVoltar.setOnAction(e -> {
-            primaryStage.setScene(previousScene); // Volta para a cena anterior
+            primaryStage.setScene(previousScene);
         });
 
-        botoesAcao.getChildren().add(btnVoltar);
+        botoesAcao.getChildren().addAll(btnVoltar);
 
         layout.getChildren().addAll(
-                new Label("Relatório de Drones Cadastrados"),
-                tabelaDrones,
-                new Label("Relatório de Transportes Cadastrados"),
+                new Label("Relatório Geral: Transportes e Drones"),
+                new Label("Transportes"),
                 tabelaTransportes,
+                new Label("Drones"),
+                tabelaDrones,
                 botoesAcao
         );
 
-        Scene scene = new Scene(layout, 800, 600);
-        primaryStage.setTitle("Mostrar Relatório Geral");
+        Scene scene = new Scene(layout, 1200, 800);
+        primaryStage.setTitle("Relatório Geral");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -84,7 +81,6 @@ public class MostrarRelatorioGeral {
     private TableView<Drone> criarTabelaDrones(DroneGestor droneGestor) {
         TableView<Drone> tabelaDrones = new TableView<>();
 
-        // Definindo as colunas
         TableColumn<Drone, Integer> colunaCodigo = new TableColumn<>("Código");
         colunaCodigo.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCodigo()).asObject());
@@ -97,26 +93,44 @@ public class MostrarRelatorioGeral {
         colunaAutonomia.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getAutonomia()).asObject());
 
+        TableColumn<Drone, String> colunaEspecifica = new TableColumn<>("Específica");
+        colunaEspecifica.setCellValueFactory(cellData -> {
+            Drone d = cellData.getValue();
+            if (d instanceof DronePessoal) {
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Qtd Pessoas: " + ((DronePessoal) d).getQtdMaxPessoas()
+                );
+            } else if (d instanceof DroneCargaInanimada) {
+                DroneCargaInanimada cargaInanimada = (DroneCargaInanimada) d;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Peso Máx: " + cargaInanimada.getPesoMaximo() +
+                                ", Proteção: " + cargaInanimada.isProtecao()
+                );
+            } else if (d instanceof DroneCargaViva) {
+                DroneCargaViva cargaViva = (DroneCargaViva) d;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Peso Máx: " + cargaViva.getPesoMaximo() +
+                                ", Climatizado: " + cargaViva.isClimatizado()
+                );
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
         TableColumn<Drone, Double> colunaCustoKm = new TableColumn<>("Custo por Km");
         colunaCustoKm.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().calculaCustoKm()).asObject());
 
-        TableColumn<Drone, String> colunaTipo = new TableColumn<>("Tipo");
-        colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Drone (Pessoal, Carga Inanimada, Carga Viva)
+        tabelaDrones.getColumns().addAll(
+                colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaEspecifica, colunaCustoKm
+        );
 
-        tabelaDrones.getColumns().addAll(colunaCodigo, colunaCustoFixo, colunaAutonomia, colunaCustoKm, colunaTipo);
-
-        // Adicionando os drones cadastrados
         tabelaDrones.getItems().setAll(droneGestor.getDrones());
-
         return tabelaDrones;
     }
 
     private TableView<Transporte> criarTabelaTransportes(TransporteGestor transporteGestor) {
         TableView<Transporte> tabelaTransportes = new TableView<>();
 
-        // Definindo as colunas
         TableColumn<Transporte, Integer> colunaNumero = new TableColumn<>("Número");
         colunaNumero.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getNumero()).asObject());
@@ -133,14 +147,57 @@ public class MostrarRelatorioGeral {
         colunaPeso.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getPeso()).asObject());
 
-        TableColumn<Transporte, String> colunaTipo = new TableColumn<>("Tipo");
-        colunaTipo.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName())); // Tipo do Transporte
+        TableColumn<Transporte, Double> colunaLatitudeOrigem = new TableColumn<>("Lat. Origem");
+        colunaLatitudeOrigem.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLatitudeOrigem()).asObject());
 
-        tabelaTransportes.getColumns().addAll(colunaNumero, colunaCliente, colunaDescricao, colunaPeso, colunaTipo);
+        TableColumn<Transporte, Double> colunaLatitudeDestino = new TableColumn<>("Lat. Destino");
+        colunaLatitudeDestino.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLatitudeDestino()).asObject());
 
-        // Adicionando os transportes cadastrados
-        tabelaTransportes.getItems().setAll(transporteGestor.getTransportes());
+        TableColumn<Transporte, Double> colunaLongitudeOrigem = new TableColumn<>("Long. Origem");
+        colunaLongitudeOrigem.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLongitudeOrigem()).asObject());
+
+        TableColumn<Transporte, Double> colunaLongitudeDestino = new TableColumn<>("Long. Destino");
+        colunaLongitudeDestino.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLongitudeDestino()).asObject());
+
+        TableColumn<Transporte, Estado> colunaSituacao = new TableColumn<>("Situação");
+        colunaSituacao.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getSituacao()));
+
+        TableColumn<Transporte, String> colunaEspecifica = new TableColumn<>("Específica");
+        colunaEspecifica.setCellValueFactory(cellData -> {
+            Transporte t = cellData.getValue();
+            if (t instanceof TransportePessoal) {
+                return new javafx.beans.property.SimpleStringProperty(String.valueOf(((TransportePessoal) t).getQtdPassageiros()));
+            } else if (t instanceof TransporteCargaInanimada) {
+                return new javafx.beans.property.SimpleStringProperty(String.valueOf(((TransporteCargaInanimada) t).isCargaPerigosa()));
+            } else if (t instanceof TransporteCargaViva) {
+                TransporteCargaViva cargaViva = (TransporteCargaViva) t;
+                return new javafx.beans.property.SimpleStringProperty(
+                        "Temp Min: " + cargaViva.getTemperaturaMinima() + ", Temp Max: " + cargaViva.getTemperaturaMaxima());
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
+        TableColumn<Transporte, Double> colunaCusto = new TableColumn<>("Custo");
+        colunaCusto.setCellValueFactory(cellData -> {
+            Transporte t = cellData.getValue();
+            if (t.getSituacao() == Estado.ALOCADO) {
+                return new javafx.beans.property.SimpleDoubleProperty(t.calcularCusto()).asObject();
+            }
+            return new javafx.beans.property.SimpleDoubleProperty(0).asObject();
+        });
+
+        tabelaTransportes.getColumns().addAll(
+                colunaNumero, colunaCliente, colunaDescricao, colunaPeso,
+                colunaLatitudeOrigem, colunaLatitudeDestino, colunaLongitudeOrigem, colunaLongitudeDestino,
+                colunaSituacao, colunaEspecifica, colunaCusto
+        );
+
+        tabelaTransportes.getItems().setAll(transporteGestor.getTodosTransportes());
 
         return tabelaTransportes;
     }

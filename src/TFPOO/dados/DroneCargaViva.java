@@ -16,4 +16,7 @@ public class DroneCargaViva extends DroneCarga {
 		double custoVariado = climatizado ? 20.00 : 10.00;
 		return getCustoFixo() + custoVariado;
 	}
+
+	//Getters
+	public boolean isClimatizado() { return climatizado; }
 }

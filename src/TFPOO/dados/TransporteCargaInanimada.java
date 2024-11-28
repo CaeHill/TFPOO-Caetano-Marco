@@ -24,4 +24,7 @@ public class TransporteCargaInanimada extends Transporte {
 		double acrescimo = cargaPerigosa ? 500.00 : 0.00;
 		return custoTransporte + acrescimo;
 	}
+
+	//Getters
+	public boolean isCargaPerigosa() { return cargaPerigosa; }
 }
